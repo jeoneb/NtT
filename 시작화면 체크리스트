@@ -1,0 +1,62 @@
+# 체크리스트
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>여행 취향 체크리스트</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; }
+    h2 { border-bottom: 1px solid #ccc; padding-bottom: 5px; }
+    .section { margin-bottom: 20px; }
+    label { display: block; margin: 8px 0; cursor: pointer; }
+    button { padding: 10px 20px; font-size: 16px; }
+  </style>
+</head>
+<body>
+
+  <h1>여행 취향 체크리스트</h1>
+
+  <form id="preferenceForm">
+
+    <div class="section">
+      <h2>1. 여행 목적</h2>
+      <label><input type="checkbox" name="purpose" value="힐링" /> 힐링</label>
+      <label><input type="checkbox" name="purpose" value="액티비티" /> 액티비티</label>
+      <label><input type="checkbox" name="purpose" value="식도락 여행" /> 식도락 여행</label>
+    </div>
+
+    <div class="section">
+      <h2>2. 여행 취향</h2>
+      <label><input type="checkbox" name="preference" value="즐기는 편" /> 즐기는 편</label>
+      <label><input type="checkbox" name="preference" value="느긋한 편" /> 느긋한 편</label>
+    </div>
+
+    <button type="button" onclick="submitPreferences()">제출</button>
+  </form>
+
+  <div id="result" style="margin-top: 20px; font-weight: bold;"></div>
+
+  <script>
+    function submitPreferences() {
+      const form = document.getElementById('preferenceForm');
+      const purposeChecked = Array.from(form.elements['purpose'])
+        .filter(chk => chk.checked)
+        .map(chk => chk.value);
+      const preferenceChecked = Array.from(form.elements['preference'])
+        .filter(chk => chk.checked)
+        .map(chk => chk.value);
+
+      if (purposeChecked.length === 0 || preferenceChecked.length === 0) {
+        alert('여행 목적과 취향을 각각 최소 한 개 이상 선택해주세요.');
+        return;
+      }
+
+      const resultDiv = document.getElementById('result');
+      resultDiv.textContent = 
+        `선택한 여행 목적: ${purposeChecked.join(', ')}\n` +
+        `선택한 여행 취향: ${preferenceChecked.join(', ')}`;
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>성신여대 캠퍼스 지도</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #fdfdfd;
+    }
+    h1 {
+      color: #8e44ad;
+      text-align: center;
+      margin-top: 20px;
+    }
+    .legend {
+      margin: 0 auto;
+      margin-top: 10px;
+      width: 90%;
+      max-width: 600px;
+      background: #f8f8fc;
+      border-radius: 8px;
+      padding: 10px 16px;
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      font-size: 15px;
+    }
+    .legend span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+    #map {
+      width: 100%;
+      height: 500px;
+      margin-top: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    .info-content {
+      padding: 8px 14px;
+      background: white;
+      border: 1px solid #888;
+      border-radius: 10px;
+      font-size: 14px;
+      color: #2c3e50;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      white-space: nowrap;
+    }
+    .facility-btn {
+      display: inline-block;
+      margin: 5px 5px 0 0;
+      padding: 4px 8px;
+      font-size: 13px;
+      color: white;
+      background: #8e44ad;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .back-btn {
+      margin-top: 8px;
+      padding: 4px 8px;
+      font-size: 13px;
+      color: #8e44ad;
+      background: #f8f8fc;
+      border: 1px solid #8e44ad;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .facility-list {
+      margin-top: 8px;
+      font-size: 13px;
+      color: #333;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <h1>성신여대 캠퍼스 지도 🗺️</h1>
+  <div class="legend">
+    <span id="btn-toilet">🚻 화장실</span>
+    <span id="btn-vending">🥤 자판기</span>
+    <span id="btn-water">💧 정수기</span>
+  </div>
+  <div id="map"></div>
+
+  <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=3bb811d698d8473f798fd1840a970d74&autoload=true"></script>
+
+  <script>
+    const container = document.getElementById('map');
+    const options = {
+      center: new kakao.maps.LatLng(37.591306, 127.022139),
+      level: 2
+    };
+    const map = new kakao.maps.Map(container, options);
+        const buildings = [
+      {
+        name: '난향관',
+        position: new kakao.maps.LatLng(37.592253, 127.021268),
+        facilities: {
+          toilet: ['1층 엘베 옆(기계실) 옆', '3층 302호 옆', '5층 501호 옆', '6층 603호 옆', '7층 702호 옆', '8층 803호 옆'],
+          vending: ['4층 엘베 앞', '7층 엘베 앞'],
+          water: ['2층 엘베 앞', '5층 엘베 앞', '7층 엘베 앞']
+        }
+      },
+      {
+        name: '행정관&중앙박물관',
+        position: new kakao.maps.LatLng(37.591536, 127.021223),
+        facilities: {
+          toilet: ['1층 거울 앞', '2층 202호 옆', '3층 301호 옆', '4층 402호 옆'],
+          vending: [],
+          water: []
+        }
+      },
+      {
+        name: '조형 2관',
+        position: new kakao.maps.LatLng(37.592232, 127.021700),
+        facilities: {
+          toilet: ['1층 103호 옆', '2층 계단 앞', '3층 계단 앞', '4층 계단 앞'],
+          vending: ['1층 107호 옆'],
+          water: ['1층 107호 옆', '2층 계단 앞', '3층 303호 앞', '4층 404호 앞']
+        }
+      },
+      {
+        name: '음악관',
+        position: new kakao.maps.LatLng(37.591978, 127.022191),
+        facilities: {
+          toilet: ['1층 사물함 옆', '2층 사물함 옆'],
+          vending: [],
+          water: ['1층 101호 앞', '2층 209호 앞', '3층 312호 옆', '4층', '5층 528호 옆']
+        }
+      },
+      {
+        name: '수정관',
+        position: new kakao.maps.LatLng(37.5911993, 127.0228533),
+        facilities: {
+          toilet: ['1층 A엘리베이터 옆', '1층 C엘리베이터 옆 서비스 센터 옆', '2층 A엘리베이터 앞', '2층 B엘리베이터 옆', '2층 C엘리베이터 앞', '3층 A엘리베이터 앞', '3층 B엘리베이터 옆', '3층 C엘리베이터 앞', '4층 A엘리베이터 앞', '4층 B엘리베이터 옆', '4층 C엘리베이터 앞', 'A동 5층 엘리베이터 앞', 'A동 6층 엘리베이터 앞', 'A동 7층 엘리베이터 앞', 'A동 8층 엘리베이터 앞', 'A동 9층 엘리베이터 앞', 'A동 10층 엘리베이터 앞', 'B동 5층 엘리베이터 앞', 'B동 6층 엘리베이터 앞', 'B동 7층 엘리베이터 앞', 'B동 8층 엘리베이터 앞', 'B동 9층 엘리베이터 앞', 'B동 10층 엘베 앞', 'C동 5층 엘리베이터 앞', 'C동 6층 엘리베이터 앞'],
+          vending: ['1층 A엘리베이터 쪽 복사실 앞', '4층 수정홀 옆'],
+          water: ['1층 A엘리베이터 쪽 복사실 앞', '1층 대학 일자리 C엘리베이터 옆 서비스 센터 옆', '2층 B엘리베이터 옆', '3층 A엘리베이터 앞', '3층 B엘리베이터 옆', '3층 C엘리베이터 앞', '4층 B엘리베이터 옆']
+        }
+      },
+      {
+        name: '성신역사관',
+        position: new kakao.maps.LatLng(37.591599, 127.022076),
+        facilities: {
+          toilet: ['1층 화장실 본입구 옆', '1층 엘레베이터 옆', '1층 110호 옆', '2층 212호 앞', '3층 310호 앞', '4층 409호 앞', '5층 화장실 502호 상담마루 앞', '6층 화장실 612호 스마트 클래스룸 앞', '7층 화장실 712호 앞', '8층 화장실 820~821호 앞', '9층 화장실 936호 앞', '10층 화장실 1030호 앞'],
+          vending: ['7층 712호 앞', '8층 821호 앞'],
+          water: ['2층 212호 앞', '3층 311호 앞', '5층 502호 상담마루 앞', '6층 613호 성신스터디룸 앞', '7층 712~713호 사이 앞', '8층 821~822호 사이 앞']
+        }
+      },
+      {
+        name: '중앙도서관',
+        position: new kakao.maps.LatLng(37.590830, 127.021616),
+        facilities: {
+          toilet: ['1층 엘리베이터 옆', '2층 엘리베이터 옆(수하랑 앞)', '3층 엘리베이터 옆', '4층 엘리베이터 옆(수하랑 앞)', '5층 엘리베이터 옆', '6층 엘리베이터 옆(수하랑 앞)', '7층 엘리베이터 옆(수하랑 앞)'],
+          vending: [],
+          water: ['1층 엘리베이터 옆', '2층 엘리베이터 옆', '3층 엘리베이터 옆', '4층 엘리베이터 옆', '5층 엘리베이터 옆', '6층 엘리베이터 옆', '7층 엘리베이터 옆']
+        }
+      },
+      {
+        name: '체육관',
+        position: new kakao.maps.LatLng(37.590600, 127.021900),
+        facilities: {
+          toilet: ['2층 정수기 앞', '센터입구 옆'],
+          vending: [],
+          water: ['휘티니스 센터 입구']
+        }
+      }
+    ];
+
+    let openInfoWindow = null;
+
+    buildings.forEach(building => {
+      const marker = new kakao.maps.Marker({
+        map: map,
+        position: building.position,
+        title: building.name
+      });
+
+      const content = document.createElement('div');
+      content.className = 'info-content';
+      content.innerHTML = `<b>${building.name}</b><br>
+        <button class="facility-btn" onclick="showFacility('${building.name}', 'toilet')">🚻 화장실</button>
+        <button class="facility-btn" onclick="showFacility('${building.name}', 'vending')">🥤 자판기</button>
+        <button class="facility-btn" onclick="showFacility('${building.name}', 'water')">💧 정수기</button>
+        <div class="facility-list" id="list-${building.name}"></div>
+        <button class="back-btn" onclick="closeInfoWindow()">뒤로가기</button>`;
+
+      const infoWindow = new kakao.maps.CustomOverlay({
+        content: content,
+        position: building.position,
+        yAnchor: 1.2
+      });
+
+      kakao.maps.event.addListener(marker, 'click', function() {
+        if (openInfoWindow) openInfoWindow.setMap(null);
+        infoWindow.setMap(map);
+        openInfoWindow = infoWindow;
+      });
+    });
+        // 이모지 마커 표시 (상단 버튼)
+    let overlayMarkers = [];
+    const toiletBuildings = ['난향관', '행정관&중앙박물관', '조형 2관', '음악관', '수정관', '성신역사관', '중앙도서관', '체육관'];
+    const vendingBuildings = ['난향관', '조형 2관', '수정관', '성신역사관'];
+    const waterBuildings = ['난향관', '조형 2관', '음악관', '수정관', '성신역사관', '중앙도서관', '체육관'];
+
+    function showOverlay(type) {
+      overlayMarkers.forEach(marker => marker.setMap(null));
+      overlayMarkers = [];
+
+      let targetBuildings = [];
+      let icon = '';
+      if (type === 'toilet') {
+        targetBuildings = toiletBuildings;
+        icon = '🚻';
+      } else if (type === 'vending') {
+        targetBuildings = vendingBuildings;
+        icon = '🥤';
+      } else if (type === 'water') {
+        targetBuildings = waterBuildings;
+        icon = '💧';
+      }
+
+      buildings.forEach(building => {
+        if (targetBuildings.includes(building.name)) {
+          const content = `<div style="font-size: 24px; transform: translate(-50%, -100%);">${icon}</div>`;
+          const overlay = new kakao.maps.CustomOverlay({
+            content: content,
+            position: building.position
+          });
+          overlay.setMap(map);
+          overlayMarkers.push(overlay);
+        }
+      });
+    }
+
+    document.getElementById('btn-toilet').addEventListener('click', () => showOverlay('toilet'));
+    document.getElementById('btn-vending').addEventListener('click', () => showOverlay('vending'));
+    document.getElementById('btn-water').addEventListener('click', () => showOverlay('water'));
+
+    // 시설 목록 표시 함수
+    function showFacility(buildingName, type) {
+      const building = buildings.find(b => b.name === buildingName);
+      const listDiv = document.getElementById(`list-${buildingName}`);
+      if (!building || !listDiv) return;
+
+      const items = building.facilities[type];
+      if (!items || items.length === 0) {
+        listDiv.innerHTML = `<p style="margin-top:5px;">정보 없음</p>`;
+        return;
+      }
+
+      let html = '<ul style="margin:5px 0; padding-left:16px;">';
+      items.forEach(loc => {
+        html += `<li>${loc}</li>`;
+      });
+      html += '</ul>';
+
+      listDiv.innerHTML = html;
+    }
+
+    // 뒤로가기 버튼 함수
+    function closeInfoWindow() {
+      if (openInfoWindow) {
+        openInfoWindow.setMap(null);
+        openInfoWindow = null;
+      }
+    }
+  </script>
+</body>
+</html>

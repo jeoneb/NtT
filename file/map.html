@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <title>성신여대 캠퍼스 지도</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      padding: 20px;
+    }
+    h1 {
+      color: #8e44ad;
+      text-align: center;
+    }
+    #map {
+      width: 100%;
+      height: 500px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>성신여대 캠퍼스 지도 🗺️</h1>
+  <div id="map"></div>
+
+  <!-- 카카오맵 API -->
+  <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=3bb811d698d8473f798fd1840a970d74&autoload=true"></script>
+
+  <script>
+    const container = document.getElementById('map');
+    const options = {
+      center: new kakao.maps.LatLng(37.591306, 127.022139),
+      level: 3
+    };
+    const map = new kakao.maps.Map(container, options);
+
+    const buildings = [
+      {
+        name: '학생회관',
+        position: new kakao.maps.LatLng(37.592323, 127.021073),
+        url: 'student-hall.html'
+      },
+      {
+        name: '난향관',
+        position: new kakao.maps.LatLng(37.592253, 127.021268),
+        url: 'nanhyang.html'
+      },
+      {
+        name: '성신역사관',
+        position: new kakao.maps.LatLng(37.591599, 127.022076),
+        url: 'sungshin.html'
+      },
+      {
+        name: '중앙도서관',
+        position: new kakao.maps.LatLng(37.590830, 127.021616),
+        url: 'library.html'
+      },
+      {
+        name: '수정관',
+        position: new kakao.maps.LatLng(37.5911993, 127.0228533),
+        url: 'sujeong.html'
+      },
+      {
+        name: '중앙박물관',
+        position: new kakao.maps.LatLng(37.591648, 127.021255),
+        url: 'museum.html'
+      }
+    ];
+
+    buildings.forEach(building => {
+      const marker = new kakao.maps.Marker({
+        map: map,
+        position: building.position
+      });
+
+      const infowindow = new kakao.maps.InfoWindow({
+        content: `
+          <div style="
+            padding: 8px 14px;
+            background: white;
+            border: 1px solid #888;
+            border-radius: 10px;
+            font-size: 14px;
+            color: #2c3e50;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            white-space: nowrap;
+          ">
+            📍 ${building.name}
+          </div>
+        `
+      });
+
+      kakao.maps.event.addListener(marker, 'mouseover', function () {
+        infowindow.open(map, marker);
+      });
+
+      kakao.maps.event.addListener(marker, 'mouseout', function () {
+        infowindow.close();
+      });
+
+      kakao.maps.event.addListener(marker, 'click', function () {
+        window.location.href = building.url;
+      });
+    });
+  </script>
+</body>
+</html>
